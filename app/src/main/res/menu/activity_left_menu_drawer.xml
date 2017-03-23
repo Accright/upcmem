@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/sliderecord"
+            android:icon="@drawable/record"
+            android:title="记录" />
+        <item
+            android:id="@+id/slidepocket"
+            android:icon="@drawable/pocket"
+            android:title="钱包"/>
+        <item
+            android:id="@+id/slidepaint"
+            android:icon="@drawable/paint"
+            android:title="报表" />
+        <item
+            android:id="@+id/slidepersonal"
+            android:icon="@drawable/personal"
+            android:title="个人资料" />
+        <item
+            android:id="@+id/slidesetting"
+            android:icon="@drawable/setting"
+            android:title="设置" />
+        <item
+            android:id="@+id/slideloginout"
+            android:icon="@drawable/loginout"
+            android:title="退出"/>
+    </group>
+
+</menu>

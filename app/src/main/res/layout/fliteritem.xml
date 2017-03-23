@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/itembg"
+    android:padding="5dp">
+    <!--UNUSED XML-->
+    <TextView
+        android:id="@+id/fliteritemtext"
+        android:layout_width="200dp"
+        android:layout_height="30dp"
+        android:text="测试"
+        android:textSize="30sp"
+        android:paddingLeft="50dp"
+        android:textColor="@color/grey"/>
+    <Switch
+        android:id="@+id/fliteritemswitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="end"
+        android:checked="true"
+        android:textOff="关"
+        android:textOn="开"
+        />
+</LinearLayout>

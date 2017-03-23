@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_pocket_edit"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.upc.software.upcmem.PocketEditActivity">
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pocketeditname"
+        android:maxLength="5"
+        android:hint="名称"/>
+    <EditText
+        android:layout_below="@id/pocketeditname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pocketeditnum"
+        android:hint="数值"/>
+    <android.support.v7.widget.AppCompatSpinner
+        android:layout_below="@id/pocketeditnum"
+        android:id="@+id/pocketeditspinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.AppCompatSpinner>
+    <Button
+        android:layout_below="@id/pocketeditspinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="确定"
+        android:id="@+id/pocketeditok"
+        android:background="@drawable/buttonshape"/>
+</RelativeLayout>

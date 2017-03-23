@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.upc.software.upcmem.MainActivity">
+    <item
+        android:icon="@drawable/dateselect"
+        android:id="@+id/dateselect"
+        android:title="日期选择"
+        app:showAsAction="ifRoom" />
+    <item
+        android:icon="@drawable/filter"
+        android:id="@+id/filter"
+        app:showAsAction="ifRoom"
+        android:title="筛选器" />
+</menu>

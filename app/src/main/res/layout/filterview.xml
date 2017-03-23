@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text = "类别:"
+            android:textSize="30sp"
+            android:textColor="@color/grey"
+            android:layout_gravity="center_vertical"
+            android:paddingStart="30dp"/>
+        <android.support.v7.widget.AppCompatSpinner
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:id="@+id/filtertypespnnier"
+            android:layout_gravity="center_vertical"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text = "明细:"
+            android:layout_gravity="center_vertical"
+            android:textSize="30sp"
+            android:textColor="@color/grey"
+            android:paddingStart="30dp"/>
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/filterkindlist"
+            android:layout_gravity="center_vertical">
+        </ListView>
+    </LinearLayout>
+
+</LinearLayout>

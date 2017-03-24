@@ -1,5 +1,6 @@
 package com.upc.Fragment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -120,8 +121,9 @@ public class OutFragment extends Fragment {
     /***********************
      * Baidu地图初始化
      ********************/
-
     public LocationClient mLocationClient;
+    /****************************************/
+    ProgressDialog progressDialog;//查询等待框
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -216,6 +218,12 @@ public class OutFragment extends Fragment {
         methodSpinner = (Spinner) viewRoot.findViewById(R.id.outmethod);
         layout_all = (RelativeLayout) viewRoot.findViewById(R.id.outlayout);//显示popwindow的初始化
         outKindsdispaly = (TextView) viewRoot.findViewById(R.id.outkindsdisplay);//初始化类别显示TextView
+        //初始化查询等待框
+        progressDialog = new ProgressDialog(getActivity());//查询时的等待框
+        progressDialog.setProgressStyle(progressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);// 设置是否可以通过点击Back键取消
+        progressDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+        progressDialog.setTitle("正在添加");
         /*************************************/
         /********************************获取方式*************************/
         BmobQuery<Pocket> bmobQuery = new BmobQuery<Pocket>();
@@ -335,6 +343,7 @@ public class OutFragment extends Fragment {
                 if (number.getText().toString().isEmpty()) {
                     number.setError("数值不能为空！");
                 } else {
+                    progressDialog.show();
                     final Double temp = Double.valueOf(number.getText().toString());
                     nRecord.setNumber(temp);
                     nRecord.setPocketId(tempId);
@@ -355,6 +364,7 @@ public class OutFragment extends Fragment {
                         public void done(BmobException e) {
                             if (e==null)
                             {
+                                progressDialog.dismiss();
                                 Log.e("smile","Pocket更新成功"+(tempNum - temp));
                                 getActivity().finish();
                             }else

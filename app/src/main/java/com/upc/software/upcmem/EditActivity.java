@@ -1,5 +1,6 @@
 package com.upc.software.upcmem;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -77,6 +78,8 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
 
     private Bitmap mBitmap;
     private File mFile,upFile;
+    /****************************************/
+    ProgressDialog progressDialog;//查询等待框
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +90,13 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         editok = (Button) findViewById(R.id.editok);
         ivHead = (CircleImageView) findViewById(R.id.editcircleImageView);
         layout_all = (RelativeLayout) findViewById(R.id.activity_edit);
+
+        //初始化查询等待框
+        progressDialog = new ProgressDialog(this);//查询时的等待框
+        progressDialog.setProgressStyle(progressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);// 设置是否可以通过点击Back键取消
+        progressDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+        progressDialog.setTitle("正在修改");
 
         initHintView();//初始化控件
         setHintView();//设置控件HINT值
@@ -176,6 +186,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             testList.add("测试1");
             testList.add("测试2");
             nUser.setTest(testList);*/
+            progressDialog.show();
             nUser.setNickName(nickname.getText().toString());
             nUser.setAge(Integer.parseInt(age.getText().toString()));
             nUser.setAdress(address.getText().toString());
@@ -187,6 +198,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                 public void done(BmobException e) {
                     if(e==null)
                     {
+                        progressDialog.dismiss();
                         Log.e("smile","用户信息更新成功");
                         finish();
                     }

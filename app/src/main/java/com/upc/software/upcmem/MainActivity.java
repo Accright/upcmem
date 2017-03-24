@@ -1,5 +1,6 @@
 package com.upc.software.upcmem;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -92,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int state;//三种状态的标识符
     private List<String> filterOut = new ArrayList<>();//bmobQuery的支出筛选查询条件
     private List<String> filterIn = new ArrayList<>();//bmobQuery的收入筛选查询条件
+    /**************************/
+    ProgressDialog progressDialog;//查询等待框
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,6 +127,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view1);
             navigationView.setNavigationItemSelectedListener(this);
+            //初始化查询等待框
+            progressDialog = new ProgressDialog(this);//查询时的等待框
+            progressDialog.setProgressStyle(progressDialog.STYLE_SPINNER);
+            progressDialog.setCancelable(false);// 设置是否可以通过点击Back键取消
+            progressDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+            progressDialog.setTitle("查询中");
             //进行slidemenu初始化
             View headerView = navigationView.getHeaderView(0);
             slideImg = (CircleImageView) headerView.findViewById(R.id.imageView);
@@ -267,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //查询数据：
             BmobQuery<Record> bmobQuery = new BmobQuery<Record>();
             bmobQuery.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);
+            bmobQuery.order("-updatedAt");
             bmobQuery.addWhereEqualTo("userId",user.getObjectId()).addWhereEqualTo("deleted",false).findObjects(new FindListener<Record>() {
                 @Override
                 public void done(List<Record> list, BmobException e) {
@@ -396,11 +406,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.e("smile","ReFresh查询过程中，filterout is++++++++++"+filterOut.toString()+"filterIn is+++++++++"+filterIn.toString());
                 bmobQuery.addWhereContainedIn("kind",filterOut);//筛选支出种类
                 //bmobQuery.addWhereContainedIn("kind",filterIn);//筛选收入种类
+                bmobQuery.order("-updatedAt");
                 bmobQuery.addWhereEqualTo("userId",user.getObjectId()).addWhereEqualTo("deleted",false).findObjects(new FindListener<Record>() {
                     @Override
                     public void done(List<Record> list, BmobException e) {
                         if(e==null)
                         {
+                            progressDialog.dismiss();
                             Message message = new Message();
                             message.obj = list;
                             Log.e("smile","查询的list值是+++++"+list.toString());
@@ -417,11 +429,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.e("smile","ReFresh查询过程中，filterout is++++++++++"+filterOut.toString()+"filterIn is+++++++++"+filterIn.toString());
                 //bmobQuery.addWhereContainedIn("kind",filterOut);//筛选支出种类
                 bmobQuery.addWhereContainedIn("kind",filterIn);//筛选收入种类
+                bmobQuery.order("-updatedAt");
                 bmobQuery.addWhereEqualTo("userId",user.getObjectId()).addWhereEqualTo("deleted",false).findObjects(new FindListener<Record>() {
                     @Override
                     public void done(List<Record> list, BmobException e) {
                         if(e==null)
                         {
+                            progressDialog.dismiss();
                             Message message = new Message();
                             message.obj = list;
                             Log.e("smile","查询的list值是+++++"+list.toString());
@@ -438,11 +452,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.e("smile","ReFresh查询过程中，filterout is++++++++++"+filterOut.toString()+"filterIn is+++++++++"+filterIn.toString());
                 //bmobQuery.addWhereContainedIn("kind",filterOut);//筛选支出种类
                 //bmobQuery.addWhereContainedIn("kind",filterIn);//筛选收入种类
+                bmobQuery.order("-updatedAt");
                 bmobQuery.addWhereEqualTo("userId",user.getObjectId()).addWhereEqualTo("deleted",false).findObjects(new FindListener<Record>() {
                     @Override
                     public void done(List<Record> list, BmobException e) {
                         if(e==null)
                         {
+                            progressDialog.dismiss();
                             Message message = new Message();
                             message.obj = list;
                             Log.e("smile","查询的list值是+++++"+list.toString());
@@ -487,11 +503,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bmobQuery.addWhereContainedIn("kind",filterOut);
             }
             Log.e("smile","日期选择执行到无筛选了");
+            bmobQuery.order("-updatedAt");
             bmobQuery.addWhereEqualTo("userId",user.getObjectId()).addWhereEqualTo("deleted",false).findObjects(new FindListener<Record>() {
                 @Override
                 public void done(List<Record> list, BmobException e) {
                     if(e==null)
                     {
+                        progressDialog.dismiss();
                         Message message = new Message();
                         message.obj = list;
                         Log.e("smile","查询的list值是+++++"+list.toString());
@@ -643,6 +661,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            progressDialog.show();
                             startDate = dialogView.getSelectedDates().get(0);
                             endDate = dialogView.getSelectedDates().get(dialogView.getSelectedDates().size()-1);
                             Log.e("smile",startDate.toString());
@@ -711,6 +730,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             filterAlertBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    progressDialog.show();
                     switch (state)
                     {
                         case STATE_IN:

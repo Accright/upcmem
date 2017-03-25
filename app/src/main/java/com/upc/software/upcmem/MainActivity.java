@@ -3,6 +3,7 @@ package com.upc.software.upcmem;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -10,8 +11,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ListViewAutoScrollHelper;
@@ -31,6 +36,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.upc.adapter.FilterMultAdapter;
 import com.upc.adapter.SpinnerAdapter;
@@ -172,6 +178,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mListView.setAdapter(mAdapter);
             }
             };
+            /******************aanroid6.0动态权限申请**********************/
+            List<String> permissionList = new ArrayList<String>();
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED)
+            {
+                permissionList.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED)
+            {
+                permissionList.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED)
+            {
+                permissionList.add(android.Manifest.permission.CAMERA);
+            }
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE)!= PackageManager.PERMISSION_GRANTED)
+            {
+                permissionList.add(android.Manifest.permission.READ_PHONE_STATE);
+            }
+            if (!permissionList.isEmpty())
+            {
+                String[] permissions = permissionList.toArray(new String[permissionList.size()]);
+                ActivityCompat.requestPermissions(this,permissions,1);
+            }
+            /************************************************/
             // step 1. create a MenuCreator
             SwipeMenuCreator creator = new SwipeMenuCreator() {
 
@@ -204,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     deleteItem.setWidth(dp2px(90));
                     // set a icon
                     deleteItem.setIcon(R.drawable.ic_delete);
-                    // add to menu
+                    // add to menuO
                     menu.addMenuItem(deleteItem);
                 }
             };
@@ -298,6 +328,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }//else结束
         }//Oncreate结束
+
+    /*********************处理权限回调函数************/
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode)
+        {
+            case 1:
+            if (grantResults.length>0) {
+                for (int result:grantResults)
+                {
+                    if (result!= PermissionChecker.PERMISSION_GRANTED)
+                    {
+                        Toast.makeText(this,"请允许获得权限！",Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+            break;
+            default:break;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
     private void initSlideImg() {
         /***********

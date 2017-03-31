@@ -2,6 +2,7 @@ package com.upc.Fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
@@ -51,6 +53,9 @@ import com.upc.adapter.GridViewAdapter;
 import com.upc.javabean.Pocket;
 import com.upc.javabean.Record;
 import com.upc.javabean.User;
+import com.upc.permission.PermissionListener;
+import com.upc.permission.PermissionManager;
+import com.upc.software.upcmem.MainActivity;
 import com.upc.software.upcmem.OutKindsEditActivity;
 import com.upc.software.upcmem.R;
 
@@ -128,6 +133,7 @@ public class OutFragment extends Fragment {
     public LocationClient mLocationClient;
     /****************************************/
     ProgressDialog progressDialog;//查询等待框
+    PermissionManager permissionManager;//动态权限请求
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -202,13 +208,43 @@ public class OutFragment extends Fragment {
                 Log.e("baidu", "定位的结果++++++++" + sb.toString());
             }
         });
-        LocationClientOption option = new LocationClientOption();
-        option.setIsNeedAddress(true);//可选，设置是否需要地址信息，默认不需要
-        option.setOpenGps(true);//可选，默认false,设置是否使用gps
-        option.setScanSpan(10000);//定位请求时间间隔
-        option.setIsNeedLocationDescribe(true);//可选，默认false，设置是否需要位置语义化结果，可以在BDLocation.getLocationDescribe里得到，结果类似于“在北京天安门附近”
-        mLocationClient.setLocOption(option);
-        mLocationClient.start();
+        /*******************请求权限**************************/
+        permissionManager = PermissionManager.with(this).addRequestCode(1)
+                .permissions(android.Manifest.permission.ACCESS_FINE_LOCATION).permissions(android.Manifest.permission.READ_PHONE_STATE)
+                .permissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE).setPermissionsListener(new PermissionListener() {
+                    @Override
+                    public void onGranted() {
+                        //当权限被授予时调用
+                        //Toast.makeText(getActivity(), "请求权限成功",Toast.LENGTH_LONG).show();
+                        LocationClientOption option = new LocationClientOption();
+                        option.setIsNeedAddress(true);//可选，设置是否需要地址信息，默认不需要
+                        option.setOpenGps(true);//可选，默认false,设置是否使用gps
+                        option.setScanSpan(10000);//定位请求时间间隔
+                        option.setIsNeedLocationDescribe(true);//可选，默认false，设置是否需要位置语义化结果，可以在BDLocation.getLocationDescribe里得到，结果类似于“在北京天安门附近”
+                        mLocationClient.setLocOption(option);
+                        mLocationClient.start();
+                    }
+
+                    @Override
+                    public void onDenied() {
+                        //用户拒绝该权限时调用
+                        Toast.makeText(getActivity(), "请求权限失败",Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onShowRationale(String[] permissions) {
+                        //当用户拒绝某权限时并点击`不再提醒`的按钮时，下次应用再请求该权限时，需要给出合适的响应（比如,给个展示对话框来解释应用为什么需要该权限）
+                        AlertDialog.Builder permissionDialog = new AlertDialog.Builder(getActivity());
+                        permissionDialog.setTitle("测试").setMessage("测试请求权限").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //必须调用该`setIsPositive(true)`方法
+                                permissionManager.setIsPositive(true);
+                                permissionManager.request();
+                            }
+                        });
+                    }
+                }).request();
         /******
          * 初始化各个控件
          */
@@ -381,6 +417,16 @@ public class OutFragment extends Fragment {
             }
         });
         return viewRoot;
+    }
+    /*******************************重写动态权限处理方法*******************/
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1:
+                permissionManager.onPermissionResult(permissions, grantResults);
+                break;
+        }
     }
 
     /*******

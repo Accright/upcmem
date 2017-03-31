@@ -32,14 +32,15 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:id="@+id/linearLayout"
-        android:layout_below="@+id/itemline"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="5dp">
+        android:layout_below="@+id/itemup"
+        android:layout_alignParentStart="true">
+
         <ImageView
             android:id="@+id/dayornight"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:src="@drawable/ic_launcher" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,13 +49,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
-                android:id="@+id/listdetailloc"
+                android:id="@+id/listdetailkind"
                 android:textSize="25sp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ceshi ..."
-                android:id="@+id/listdetailkind"
+                android:id="@+id/listdetailloc"
                 android:textColor="#858282"
                 />
 

@@ -3,13 +3,26 @@ package com.upc.software.upcmem;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.upc.Fragment.BarGraphFragment;
+import com.upc.Fragment.PieChartFragment;
+import com.upc.adapter.AddFragmentPageAdapter;
 import com.upc.javabean.Record;
 import com.upc.javabean.User;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,198 +40,91 @@ import lecho.lib.hellocharts.view.PieChartView;
 
 public class AnalyseActivity extends AppCompatActivity {
 
-    private PieChartView pieChartView;
     User user;
-    List<String> outkinds,inkinds;
-    List<SliceValue> values,handleValues;
-    Handler handler;
-    /*========= 数据相关 =========*/
-    private PieChartData mPieChartData;                 //饼状图数据
-    /*========= 状态相关 =========*/
-    private boolean isExploded = false;                 //每块之间是否分离
-    private boolean isHasLabelsInside = true;          //标签在内部
-    private boolean isHasLabelsOutside = false;         //标签在外部
-    private boolean isHasCenterCircle = true;          //空心圆环
-    private boolean isPiesHasSelected = false;          //块选中标签样式
-    private boolean isHasCenterSingleText = true;      //圆环中心单行文字
-    private boolean isHasCenterDoubleText = true;      //圆环中心双行文字
+    private ArrayList<Fragment> fragmentList;
+    private ViewPager viewPager;
+    private TextView cursor;
+    private TextView pieText,lineText,barText;
+    private int index;//the index of tap
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analyse);
         user = BmobUser.getCurrentUser(User.class);
-        initView();
-        setDatas();
+        initViews();
+        initCursorBar();
+        initViewPager();
     }
 
-    private void setDatas() {
-        outkinds = user.getOutKinds();
-        inkinds = user.getInKinds();
-        final List<Integer> listCountOut = new ArrayList<Integer>();
-        final List<Integer> listCountIn = new ArrayList<Integer>();
-        final int inValue = inkinds.size();
-        final int outValue = outkinds.size();
-        /***************获取不同支出分类的计数*******************/
-        for(int i = 0;i<outkinds.size();i++)
-        {
-            BmobQuery<Record> bmobQuery = new BmobQuery<Record>();
-            bmobQuery.addWhereEqualTo("userId",user.getObjectId());
-            bmobQuery.addWhereEqualTo("kind",outkinds.get(i));
-            bmobQuery.addWhereEqualTo("deleted",false);
-            bmobQuery.count(Record.class, new CountListener() {
-                @Override
-                public void done(Integer integer, BmobException e) {
-                    if (e!=null)
-                    {
-                        Log.e("smile","分析计数失败了支出"+e.getMessage());
-                    }else
-                    {
-                        Log.e("smile","分析计数成功了支出"+integer);
-                        listCountOut.add(integer);
-                        values = new ArrayList<>();
-                        for (int i = 0; i < outValue; ++i) {
-                            SliceValue sliceValue = new SliceValue((float) listCountOut.get(i), ChartUtils.pickColor());
-                            sliceValue.setLabel(outkinds.get(i));
-                            values.add(sliceValue);
-                            Message msg = new Message();
-                            msg.what=1;
-                            msg.obj = values;
-                            handler.sendMessage(msg);
-                        }
-                    }
-                }
-            });
-        }
-        /***************获取不同收入分类的计数*******************/
-        for(int i = 0;i<inkinds.size();i++)
-        {
-            BmobQuery<Record> bmobQuery = new BmobQuery<Record>();
-            bmobQuery.addWhereEqualTo("deleted",false);
-            bmobQuery.addWhereEqualTo("userId",user.getObjectId());
-            bmobQuery.addWhereEqualTo("kind",inkinds.get(i));
-            bmobQuery.count(Record.class, new CountListener() {
-                @Override
-                public void done(Integer integer, BmobException e) {
-                    if (e!=null)
-                    {
-                        Log.e("smile","分析计数失败了收入"+e.getMessage());
-                    }else
-                    {
-                        Log.e("smile","分析计数成功了收入"+integer);
-                        listCountIn.add(integer);
-                        values = new ArrayList<SliceValue>();
-                        for(int j = 0;j<= inValue;j++)
-                        {
-                            SliceValue sliceValue = new SliceValue((float)listCountIn.get(j),ChartUtils.pickColor());
-                            sliceValue.setLabel(inkinds.get(j));
-                            Message msg = new Message();
-                            msg.what = 2;
-                            msg.obj = values;
-                            handler.sendMessage(msg);
-                        }
-                    }
-                }
-            });
-        }
-        /************处理handler的message****************/
-        handler = new Handler()
-        {
+    private void initViewPager() {
+        fragmentList = new ArrayList<>();
+        Fragment pieChartFragment = new PieChartFragment();
+        Fragment lineChartFragment = new ListFragment();
+        Fragment barGraphFragment = new BarGraphFragment();
+        fragmentList.add(pieChartFragment);
+        fragmentList.add(lineChartFragment);
+        fragmentList.add(barGraphFragment);
+
+        AddFragmentPageAdapter fragmentAdapter = new AddFragmentPageAdapter(getSupportFragmentManager(),fragmentList);
+        viewPager.setAdapter(fragmentAdapter);
+        viewPager.setCurrentItem(0);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what)
-                {
-                    case 1:handleValues = new ArrayList<>();
-                        handleValues = (List<SliceValue>) msg.obj;
-                        //mPieChartData = new PieChartData(handleValues);
-                        /*===== 设置相关属性 类似Line Chart =====*/
-                        Log.e("smile","handle出来的Value是++++++"+handleValues.toString());
-                        mPieChartData = new PieChartData(handleValues);
-                        mPieChartData.setHasLabels(isHasLabelsInside);
-                        mPieChartData.setHasLabelsOnlyForSelected(isPiesHasSelected);
-                        mPieChartData.setHasLabelsOutside(isHasLabelsOutside);
-                        mPieChartData.setHasCenterCircle(isHasCenterCircle);
-                        if (isExploded) {
-                            mPieChartData.setSlicesSpacing(18);                 //分离间距为18
-                        }
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                RelativeLayout.LayoutParams ll = (android.widget.RelativeLayout.LayoutParams) cursor
+                        .getLayoutParams();
 
-                        //是否显示单行文本
-                        if (isHasCenterSingleText) {
-                            mPieChartData.setCenterText1("支出分类");             //文本内容
-                        }
-
-                        //是否显示双行文本
-                        if (isHasCenterDoubleText) {
-                            mPieChartData.setCenterText2("饼状图");             //文本内容
-                        }
-                        pieChartView.setPieChartData(mPieChartData);
-                        break;
-                    case 2:handleValues = new ArrayList<>();
-                        handleValues = (List<SliceValue>) msg.obj;
-                        /*===== 设置相关属性 类似Line Chart =====*/
-                        Log.e("smile","handle出来的Value是++++++"+handleValues.toString());
-                        mPieChartData = new PieChartData(handleValues);
-                        mPieChartData.setHasLabels(isHasLabelsInside);
-                        mPieChartData.setHasLabelsOnlyForSelected(isPiesHasSelected);
-                        mPieChartData.setHasLabelsOutside(isHasLabelsOutside);
-                        mPieChartData.setHasCenterCircle(isHasCenterCircle);
-                        if (isExploded) {
-                            mPieChartData.setSlicesSpacing(18);                 //分离间距为18
-                        }
-
-                        //是否显示单行文本
-                        if (isHasCenterSingleText) {
-                            mPieChartData.setCenterText1("支出分类");             //文本内容
-                        }
-
-                        //是否显示双行文本
-                        if (isHasCenterDoubleText) {
-                            mPieChartData.setCenterText2("饼状图");             //文本内容
-                        }
-                        pieChartView.setPieChartData(mPieChartData);
-                        break;
-                    default:break;
+                if(index == position){
+                    ll.leftMargin = (int) (index * cursor.getWidth() + positionOffset
+                            * cursor.getWidth());
+                }else if(index > position){
+                    ll.leftMargin = (int) (index * cursor.getWidth() - (1 - positionOffset)* cursor.getWidth());
                 }
+                cursor.setLayoutParams(ll);
             }
-        };
-        /*===== 设置相关属性 类似Line Chart =====*//*
-        Log.e("smile","handle出来的Value是++++++"+handleValues.toString());
-        mPieChartData = new PieChartData(handleValues);
-        mPieChartData.setHasLabels(isHasLabelsInside);
-        mPieChartData.setHasLabelsOnlyForSelected(isPiesHasSelected);
-        mPieChartData.setHasLabelsOutside(isHasLabelsOutside);
-        mPieChartData.setHasCenterCircle(isHasCenterCircle);
-        if (isExploded) {
-            mPieChartData.setSlicesSpacing(18);                 //分离间距为18
-        }
 
-        //是否显示单行文本
-        if (isHasCenterSingleText) {
-            mPieChartData.setCenterText1("收入分类");             //文本内容
-        }
+            @Override
+            public void onPageSelected(int position) {
 
-        //是否显示双行文本
-        if (isHasCenterDoubleText) {
-            mPieChartData.setCenterText2("饼状图");             //文本内容
-        }
-        pieChartView.setPieChartData(mPieChartData);*/
-        pieChartView.setOnValueTouchListener(new ValueTouchListener());
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
-    private void initView() {
-        pieChartView = (PieChartView) findViewById(R.id.analysepie);//初始化饼状图控件
-    }
-    /**
-     * 每部分点击监听
-     */
-    private class ValueTouchListener implements PieChartOnValueSelectListener {
+    private void initViews() {
+        viewPager = (ViewPager)findViewById(R.id.analyseviewpager);
+        cursor = (TextView) findViewById(R.id.analysecursor);
+        pieText = (TextView) findViewById(R.id.pie);
+        lineText = (TextView) findViewById(R.id.line);
+        barText = (TextView) findViewById(R.id.bar);
 
+        pieText.setOnClickListener(new txListener(0));
+        lineText.setOnClickListener(new txListener(1));
+        barText.setOnClickListener(new txListener(2));
+    }
+    public class txListener implements View.OnClickListener{
+        private int index=0;
+
+        public txListener(int i) {
+            index =i;
+        }
         @Override
-        public void onValueSelected(int arcIndex, SliceValue value) {
-            Toast.makeText(AnalyseActivity.this, outkinds.get (arcIndex)+"类别有: " +(int) value.getValue() + "条数据", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onValueDeselected() {
+        public void onClick(View v) {
+            viewPager.setCurrentItem(index);
         }
     }
+    public void initCursorBar(){
+        Display display = getWindow().getWindowManager().getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+        int  tabLineLength = metrics.widthPixels / 3;
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)cursor.getLayoutParams();
+        lp.width = tabLineLength;
+        cursor.setLayoutParams(lp);
+    }
+
 }

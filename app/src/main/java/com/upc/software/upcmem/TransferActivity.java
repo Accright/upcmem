@@ -1,5 +1,6 @@
 package com.upc.software.upcmem;
 
+import android.app.ProgressDialog;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,6 +43,8 @@ public class TransferActivity extends AppCompatActivity {
     Double tempNumBe,tempNumAf;
     String coinBe,coinAf;
     User user;
+    /**************************/
+    ProgressDialog progressDialog;//查询等待框
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +52,13 @@ public class TransferActivity extends AppCompatActivity {
         user = BmobUser.getCurrentUser(User.class);
         initView();
         setFilter();
+        //初始化查询等待框
+        progressDialog = new ProgressDialog(this);//查询时的等待框
+        progressDialog.setProgressStyle(progressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);// 设置是否可以通过点击Back键取消
+        progressDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+        progressDialog.setTitle("正在获取钱包数据");
+        /****************************************************************************/
         initWidget();
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,6 +66,9 @@ public class TransferActivity extends AppCompatActivity {
                 if (!coinBe.equals(coinAf))
                 {
                     Toast.makeText(getApplicationContext(),"币种不同不能转账",Toast.LENGTH_SHORT).show();
+                }else if (tempIdBe.equals(tempIdAf))
+                {
+                    Toast.makeText(getApplicationContext(),"同一账户不能转账",Toast.LENGTH_SHORT).show();
                 }else
                 {
                     if (num.getText().toString().equals("")||num.getText().toString().equals(null))
@@ -92,8 +105,8 @@ public class TransferActivity extends AppCompatActivity {
                                 }
                             }
                         });
+                        finish();
                     }
-                    finish();
                 }
             }
         });
@@ -101,6 +114,7 @@ public class TransferActivity extends AppCompatActivity {
 
     private void initWidget() {
         /********************************获取方式*************************/
+        progressDialog.show();//Display the dialog
         BmobQuery<Pocket> bmobQuery = new BmobQuery<Pocket>();
         bmobQuery.addWhereEqualTo("userId",user.getObjectId());
         bmobQuery.addWhereEqualTo("deleted",false);
@@ -109,6 +123,7 @@ public class TransferActivity extends AppCompatActivity {
             public void done(List<Pocket> list, BmobException e) {
                 if(e==null)
                 {
+                    progressDialog.dismiss();//Dismiss the dialog
                     methodList = new ArrayList<HashMap<String, Pocket>>();
                     //nameMethodList = new ArrayList<String>();
                     //numMethodList = new ArrayList<Integer>();

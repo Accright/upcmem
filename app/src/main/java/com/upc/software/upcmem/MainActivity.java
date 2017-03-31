@@ -1,5 +1,6 @@
 package com.upc.software.upcmem;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -45,6 +46,8 @@ import com.upc.javabean.CircleImageView;
 import com.upc.javabean.Record;
 import com.upc.javabean.RecordHolder;
 import com.upc.javabean.User;
+import com.upc.permission.PermissionListener;
+import com.upc.permission.PermissionManager;
 import com.upc.swipemenulistView.BaseSwipListAdapter;
 import com.upc.swipemenulistView.IXListViewListener;
 import com.upc.swipemenulistView.OnMenuItemClickListener;
@@ -178,30 +181,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mListView.setAdapter(mAdapter);
             }
             };
-            /******************aanroid6.0动态权限申请**********************/
-            List<String> permissionList = new ArrayList<String>();
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED)
-            {
-                permissionList.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
-            }
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED)
-            {
-                permissionList.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            }
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED)
-            {
-                permissionList.add(android.Manifest.permission.CAMERA);
-            }
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE)!= PackageManager.PERMISSION_GRANTED)
-            {
-                permissionList.add(android.Manifest.permission.READ_PHONE_STATE);
-            }
-            if (!permissionList.isEmpty())
-            {
-                String[] permissions = permissionList.toArray(new String[permissionList.size()]);
-                ActivityCompat.requestPermissions(this,permissions,1);
-            }
-            /************************************************/
             // step 1. create a MenuCreator
             SwipeMenuCreator creator = new SwipeMenuCreator() {
 
@@ -328,27 +307,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }//else结束
         }//Oncreate结束
-
-    /*********************处理权限回调函数************/
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode)
-        {
-            case 1:
-            if (grantResults.length>0) {
-                for (int result:grantResults)
-                {
-                    if (result!= PermissionChecker.PERMISSION_GRANTED)
-                    {
-                        Toast.makeText(this,"请允许获得权限！",Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-            break;
-            default:break;
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 
     private void initSlideImg() {
         /***********

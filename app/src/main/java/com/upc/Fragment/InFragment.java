@@ -1,5 +1,6 @@
 package com.upc.Fragment;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +11,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
@@ -44,6 +47,8 @@ import com.upc.adapter.GridViewAdapter;
 import com.upc.javabean.Pocket;
 import com.upc.javabean.Record;
 import com.upc.javabean.User;
+import com.upc.permission.PermissionListener;
+import com.upc.permission.PermissionManager;
 import com.upc.software.upcmem.InKindsEditActivity;
 import com.upc.software.upcmem.R;
 

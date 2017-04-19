@@ -412,6 +412,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.e("smile","执行到对支出进行筛选了");
                 BmobQuery<Record> bmobQuery = new BmobQuery<Record>();
                 bmobQuery.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);
+                bmobQuery.addWhereEqualTo("type","支出");
                 Log.e("smile","ReFresh查询过程中，filterout is++++++++++"+filterOut.toString()+"filterIn is+++++++++"+filterIn.toString());
                 bmobQuery.addWhereContainedIn("kind",filterOut);//筛选支出种类
                 //bmobQuery.addWhereContainedIn("kind",filterIn);//筛选收入种类
@@ -435,6 +436,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.e("smile","执行到对收入进行筛选了");
                 BmobQuery<Record> bmobQuery = new BmobQuery<Record>();
                 bmobQuery.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);
+                bmobQuery.addWhereEqualTo("type","收入");
                 Log.e("smile","ReFresh查询过程中，filterout is++++++++++"+filterOut.toString()+"filterIn is+++++++++"+filterIn.toString());
                 //bmobQuery.addWhereContainedIn("kind",filterOut);//筛选支出种类
                 bmobQuery.addWhereContainedIn("kind",filterIn);//筛选收入种类
@@ -505,10 +507,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if(filterIn.size()!=0&&filterOut.size()==0)
             {
                 Log.e("smile","日期选择执行到对收入进行筛选了");
+                bmobQuery.addWhereEqualTo("type","收入");
                 bmobQuery.addWhereContainedIn("kind",filterIn);
             }else if (filterIn.size()==0&&filterOut.size()!=0)
             {
                 Log.e("smile","日期选择执行到对支出进行筛选了");
+                bmobQuery.addWhereEqualTo("type","支出");
                 bmobQuery.addWhereContainedIn("kind",filterOut);
             }
             Log.e("smile","日期选择执行到无筛选了");

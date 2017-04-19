@@ -12,11 +12,12 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.upc.Fragment.BarGraphFragment;
+import com.upc.Fragment.LineChartFragment;
 import com.upc.Fragment.PieChartFragment;
 import com.upc.adapter.AddFragmentPageAdapter;
 import com.upc.javabean.Record;
@@ -59,7 +60,7 @@ public class AnalyseActivity extends AppCompatActivity {
     private void initViewPager() {
         fragmentList = new ArrayList<>();
         Fragment pieChartFragment = new PieChartFragment();
-        Fragment lineChartFragment = new ListFragment();
+        Fragment lineChartFragment = new LineChartFragment();
         Fragment barGraphFragment = new BarGraphFragment();
         fragmentList.add(pieChartFragment);
         fragmentList.add(lineChartFragment);
@@ -71,7 +72,7 @@ public class AnalyseActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                RelativeLayout.LayoutParams ll = (android.widget.RelativeLayout.LayoutParams) cursor
+                LinearLayout.LayoutParams ll = (android.widget.LinearLayout.LayoutParams) cursor
                         .getLayoutParams();
 
                 if(index == position){
@@ -90,7 +91,7 @@ public class AnalyseActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                index = state;
             }
         });
     }
@@ -107,14 +108,14 @@ public class AnalyseActivity extends AppCompatActivity {
         barText.setOnClickListener(new txListener(2));
     }
     public class txListener implements View.OnClickListener{
-        private int index=0;
+        private int currentIndex=0;
 
         public txListener(int i) {
-            index =i;
+            currentIndex =i;
         }
         @Override
         public void onClick(View v) {
-            viewPager.setCurrentItem(index);
+            viewPager.setCurrentItem(currentIndex);
         }
     }
     public void initCursorBar(){
@@ -122,7 +123,7 @@ public class AnalyseActivity extends AppCompatActivity {
         DisplayMetrics metrics = new DisplayMetrics();
         display.getMetrics(metrics);
         int  tabLineLength = metrics.widthPixels / 3;
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)cursor.getLayoutParams();
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)cursor.getLayoutParams();
         lp.width = tabLineLength;
         cursor.setLayoutParams(lp);
     }

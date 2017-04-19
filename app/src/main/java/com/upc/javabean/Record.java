@@ -20,6 +20,7 @@ public class Record extends BmobObject {
     private String remark;//备注
     private String locationDetail;//定位详细信息
     private String pocketId;//该记录所属钱包的id
+    private Integer month;//该记录的数据产生月份 用于统计查询
 
     public String getPocketId() {
         return pocketId;
@@ -123,5 +124,13 @@ public class Record extends BmobObject {
 
     public void setNumber(Double number) {
         this.number = number;
+    }
+
+    public Integer getMonth() {
+        return month;
+    }
+
+    public void setMonth(Integer month) {
+        this.month = month;
     }
 }

@@ -64,6 +64,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -184,6 +185,9 @@ public class OutFragment extends Fragment {
                 } else if (bdLocation.getLocType() == BDLocation.TypeServerError) {
                     sb.append("\ndescribe : ");
                     sb.append("服务端网络定位失败，可以反馈IMEI号和大体定位时间到loc-bugs@baidu.com，会有人追查原因");
+                    nRecord.setLocationDetail("未知地点");
+                    nRecord.setLocation("未知");
+                    location.setText("无法获取地理位置，请打开相应权限");
                 } else if (bdLocation.getLocType() == BDLocation.TypeNetWorkException) {
                     sb.append("\ndescribe : ");
                     sb.append("网络不同导致定位失败，请检查网络是否通畅");
@@ -202,10 +206,14 @@ public class OutFragment extends Fragment {
                         sb.append(p.getId() + " " + p.getName() + " " + p.getRank());
                     }
                 }
-                nRecord.setLocation(bdLocation.getCity());
-                nRecord.setLocationDetail(bdLocation.getAddrStr());
-                location.setText(bdLocation.getAddrStr());
-                Log.e("baidu", "定位的结果++++++++" + sb.toString());
+                if (bdLocation.getCity()!=null&&bdLocation.getAddrStr()!=null)
+                {
+                    nRecord.setLocation(bdLocation.getCity());
+                    nRecord.setLocationDetail(bdLocation.getAddrStr());
+                    location.setText(bdLocation.getAddrStr());
+                    Log.e("smile","获取的地点打印+++"+bdLocation.getCity()+bdLocation.getAddrStr());
+                    Log.e("baidu", "定位的结果++++++++" + sb.toString());
+                }
             }
         });
         /*******************请求权限**************************/
@@ -387,6 +395,10 @@ public class OutFragment extends Fragment {
                     final Double temp = Double.valueOf(number.getText().toString());
                     nRecord.setNumber(temp);
                     nRecord.setPocketId(tempId);
+                    /******************统计查询进行月份记录******************/
+                    Calendar calendar = Calendar.getInstance();
+                    int month = calendar.get(Calendar.MONTH)+1;
+                    nRecord.setMonth(month);
                     /****************pocket数值更改*****************/
                     nPocket.setNumber((tempNum - temp));
                     uploadPic();

@@ -10,14 +10,14 @@
     android:paddingTop="@dimen/activity_vertical_margin">
     <lecho.lib.hellocharts.view.PieChartView
         android:layout_width="match_parent"
-        android:layout_height="230dp"
+        android:layout_height="350dp"
         android:transitionName="pie"
-        android:id="@+id/analysepieout"/>
-    <lecho.lib.hellocharts.view.PieChartView
-        android:layout_below="@id/analysepieout"
+        android:id="@+id/analysepie"/>
+    <Button
+        android:layout_below="@id/analysepie"
         android:layout_width="match_parent"
-        android:layout_height="230dp"
-        android:transitionName="pie"
-        android:id="@+id/analysepiein"/>
-
+        android:layout_height="wrap_content"
+        android:id="@+id/changedatepie"
+        android:text="切换数据"
+        android:background="@drawable/buttonshape"/>
 </RelativeLayout>

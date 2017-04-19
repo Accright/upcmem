@@ -10,12 +10,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.upc.javabean.Record;
 import com.upc.javabean.User;
 import com.upc.software.upcmem.AnalyseActivity;
 import com.upc.software.upcmem.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +29,8 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.CountListener;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
 import lecho.lib.hellocharts.listener.PieChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
@@ -33,11 +40,15 @@ import lecho.lib.hellocharts.view.PieChartView;
 public class PieChartFragment extends Fragment {
 
 
-    private PieChartView pieChartViewIn,pieChartViewOut;
+    private PieChartView pieChartView;
+    private Button changeData;
+    private int tag = 0;
+    List<Integer> listCountOut,listCountIn;
     User user;
     List<String> outkinds,inkinds;
     List<SliceValue> outvalues,invalues,handleValues;
     Handler handler;
+    int i,j;//init i of  cycle
     /*========= 数据相关 =========*/
     private PieChartData mPieChartData;                 //饼状图数据
     /*========= 状态相关 =========*/
@@ -54,94 +65,20 @@ public class PieChartFragment extends Fragment {
         // Inflate the layout for this fragment
         View viewRoot = inflater.inflate(R.layout.fragment_pie_chart,container,false);
         user = BmobUser.getCurrentUser(User.class);
-        pieChartViewOut = (PieChartView) viewRoot.findViewById(R.id.analysepieout);
-        pieChartViewIn = (PieChartView) viewRoot.findViewById(R.id.analysepiein);//初始化饼状图控件
+        pieChartView = (PieChartView) viewRoot.findViewById(R.id.analysepie);
+        changeData = (Button) viewRoot.findViewById(R.id.changedatepie);
         setDatas();
-        return viewRoot;
-    }
-
-    private void setDatas() {
-        outkinds = user.getOutKinds();
-        inkinds = user.getInKinds();
-        final List<Integer> listCountOut = new ArrayList<Integer>();
-        final List<Integer> listCountIn = new ArrayList<Integer>();
-        final int inValue = inkinds.size();
-        final int outValue = outkinds.size();
-        /***************获取不同支出分类的计数*******************/
-        for(int i = 0;i<outkinds.size();i++)
-        {
-            BmobQuery<Record> bmobQuery = new BmobQuery<Record>();
-            bmobQuery.addWhereEqualTo("userId",user.getObjectId());
-            bmobQuery.addWhereEqualTo("kind",outkinds.get(i));
-            bmobQuery.addWhereEqualTo("deleted",false);
-            bmobQuery.count(Record.class, new CountListener() {
-                @Override
-                public void done(Integer integer, BmobException e) {
-                    if (e!=null)
-                    {
-                        Log.e("smile","支出分析计数失败了"+e.getMessage());
-                    }else
-                    {
-                        Log.e("smile","支出分析计数成功了"+integer);
-                        listCountOut.add(integer);
-                        outvalues = new ArrayList<>();
-                        for (int i = 0; i < outValue; ++i) {
-                            SliceValue sliceValue = new SliceValue((float) listCountOut.get(i), ChartUtils.pickColor());
-                            sliceValue.setLabel(outkinds.get(i));
-                            outvalues.add(sliceValue);
-                            Message msg = new Message();
-                            msg.what=1;
-                            msg.obj = outvalues;
-                            handler.sendMessage(msg);
-                        }
-                    }
-                }
-            });
-        }
-        /***************获取不同收入分类的计数*******************/
-        for(int i = 0;i<inkinds.size();i++)
-        {
-            BmobQuery<Record> bmobQuery = new BmobQuery<Record>();
-            bmobQuery.addWhereEqualTo("deleted",false);
-            bmobQuery.addWhereEqualTo("userId",user.getObjectId());
-            bmobQuery.addWhereEqualTo("kind",inkinds.get(i));
-            bmobQuery.count(Record.class, new CountListener() {
-                @Override
-                public void done(Integer integer, BmobException e) {
-                    if (e!=null)
-                    {
-                        Log.e("smile","分析计数失败了收入"+e.getMessage());
-                    }else
-                    {
-                        Log.e("smile","分析计数成功了收入"+integer);
-                        listCountIn.add(integer);
-                        invalues = new ArrayList<SliceValue>();
-                        for(int j = 0;j<= inValue;j++)
-                        {
-                            SliceValue sliceValue = new SliceValue((float)listCountIn.get(j),ChartUtils.pickColor());
-                            sliceValue.setLabel(inkinds.get(j));
-                            invalues.add(sliceValue);
-                            Message msg = new Message();
-                            msg.what = 2;
-                            msg.obj = invalues;
-                            handler.sendMessage(msg);
-                        }
-                    }
-                }
-            });
-        }
-        /************处理handler的message****************/
         handler = new Handler()
         {
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what)
                 {
-                    case 1:handleValues = new ArrayList<>();
+                    case 0:handleValues = new ArrayList<>();
                         handleValues = (List<SliceValue>) msg.obj;
                         //mPieChartData = new PieChartData(handleValues);
                         /*===== 设置相关属性 类似Line Chart =====*/
-                        Log.e("smile","handle出来的Value是++++++"+handleValues.toString());
+                        Log.e("smile","支出handle出来的Value是++++++"+handleValues.toString());
                         mPieChartData = new PieChartData(handleValues);
                         mPieChartData.setHasLabels(isHasLabelsInside);
                         mPieChartData.setHasLabelsOnlyForSelected(isPiesHasSelected);
@@ -160,12 +97,12 @@ public class PieChartFragment extends Fragment {
                         if (isHasCenterDoubleText) {
                             mPieChartData.setCenterText2("饼状图");             //文本内容
                         }
-                        pieChartViewOut.setPieChartData(mPieChartData);
+                        pieChartView.setPieChartData(mPieChartData);
                         break;
-                    case 2:handleValues = new ArrayList<>();
+                    case 1:handleValues = new ArrayList<>();
                         handleValues = (List<SliceValue>) msg.obj;
                         /*===== 设置相关属性 类似Line Chart =====*/
-                        Log.e("smile","handle出来的Value是++++++"+handleValues.toString());
+                        Log.e("smile","收入handle出来的Value是++++++"+handleValues.toString());
                         mPieChartData = new PieChartData(handleValues);
                         mPieChartData.setHasLabels(isHasLabelsInside);
                         mPieChartData.setHasLabelsOnlyForSelected(isPiesHasSelected);
@@ -174,73 +111,153 @@ public class PieChartFragment extends Fragment {
                         if (isExploded) {
                             mPieChartData.setSlicesSpacing(18);                 //分离间距为18
                         }
-
                         //是否显示单行文本
                         if (isHasCenterSingleText) {
                             mPieChartData.setCenterText1("收入分类");             //文本内容
                         }
-
                         //是否显示双行文本
                         if (isHasCenterDoubleText) {
                             mPieChartData.setCenterText2("饼状图");             //文本内容
                         }
-                        pieChartViewIn.setPieChartData(mPieChartData);
+                        pieChartView.setPieChartData(mPieChartData);
                         break;
                     default:break;
                 }
             }
         };
-        /*===== 设置相关属性 类似Line Chart =====*//*
-        Log.e("smile","handle出来的Value是++++++"+handleValues.toString());
-        mPieChartData = new PieChartData(handleValues);
-        mPieChartData.setHasLabels(isHasLabelsInside);
-        mPieChartData.setHasLabelsOnlyForSelected(isPiesHasSelected);
-        mPieChartData.setHasLabelsOutside(isHasLabelsOutside);
-        mPieChartData.setHasCenterCircle(isHasCenterCircle);
-        if (isExploded) {
-            mPieChartData.setSlicesSpacing(18);                 //分离间距为18
-        }
+        changeData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (tag == 0)
+                {
+                    tag = 1;
+                    setDatas();
+                    pieChartView.startDataAnimation();
+                }else
+                {
+                    tag = 0;
+                    setDatas();
+                    pieChartView.startDataAnimation();
+                }
+            }
+        });
+        return viewRoot;
+    }
 
-        //是否显示单行文本
-        if (isHasCenterSingleText) {
-            mPieChartData.setCenterText1("收入分类");             //文本内容
-        }
+    private void setDatas() {
 
-        //是否显示双行文本
-        if (isHasCenterDoubleText) {
-            mPieChartData.setCenterText2("饼状图");             //文本内容
+
+        /***************获取不同支出分类的计数*******************/
+        if(tag == 0)
+        {
+            getOutDatas();
+        }else
+        {
+            getInDatas();
         }
-        pieChartView.setPieChartData(mPieChartData);*/
-        pieChartViewOut.setOnValueTouchListener(new OutValueTouchListener());
-        pieChartViewIn.setOnValueTouchListener(new InValueTouchListener());
+        /************处理handler的message****************/
+        pieChartView.setOnValueTouchListener(new ValueTouchListener());
     }
     /**
      * 每部分点击监听
      */
-    private class OutValueTouchListener implements PieChartOnValueSelectListener {
+    private class ValueTouchListener implements PieChartOnValueSelectListener {
 
         @Override
         public void onValueSelected(int arcIndex, SliceValue value) {
-            Toast.makeText(getActivity(), outkinds.get (arcIndex)+"类别有: " +(int) value.getValue() + "条数据", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), String.valueOf(value.getLabelAsChars()) +"类别有: " +(int) value.getValue() + "条数据", Toast.LENGTH_SHORT).show();
         }
-
         @Override
         public void onValueDeselected() {
         }
     }
-    /**
-     * 每部分点击监听
-     */
-    private class InValueTouchListener implements PieChartOnValueSelectListener {
+    private  void getOutDatas()
+    {
+        outvalues = new ArrayList<>();
+        Log.e("smile","piechart执行到支出筛选");
+        BmobQuery<Record> bmobQuery = new BmobQuery<>();
+        bmobQuery.addWhereEqualTo("type","支出");
+        bmobQuery.groupby(new String[]{"kind"});
+        bmobQuery.order("-created");
+        bmobQuery.setHasGroupCount(true);
+        bmobQuery.findStatistics(Record.class,new QueryListener<JSONArray>() {
 
-        @Override
-        public void onValueSelected(int arcIndex, SliceValue value) {
-            Toast.makeText(getActivity(), inkinds.get (arcIndex)+"类别有: " +(int) value.getValue() + "条数据", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onValueDeselected() {
-        }
+            @Override
+            public void done(JSONArray jsonArray, BmobException e) {
+                if (e == null)
+                {
+                    if (jsonArray != null)
+                    {
+                        try {
+                        int length = jsonArray.length();
+                        for (int i=0;i<length;i++)
+                        {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String lable = jsonObject.getString("kind");
+                            int num = jsonObject.getInt("_count");
+                            SliceValue sliceValue = new SliceValue((float)num,ChartUtils.pickColor());
+                            sliceValue.setLabel(lable);
+                            outvalues.add(sliceValue);
+                        }
+                            Message msg = new Message();
+                            msg.what = tag;
+                            msg.obj = outvalues;
+                            handler.sendMessage(msg);
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    }else
+                    {
+                        Log.e("smile","查询无数据 数组是空的");
+                    }
+                }else
+                {
+                    Log.e("smile","查询出错了++"+e.getMessage());
+                }
+            }
+        });
     }
+    private void getInDatas() {
+        invalues = new ArrayList<>();
+        Log.e("smile","piechart执行到收入筛选");
+        BmobQuery<Record> bmobQuery = new BmobQuery<>();
+        bmobQuery.addWhereEqualTo("type", "收入");
+        bmobQuery.groupby(new String[]{"kind"});
+        bmobQuery.order("-created");
+        bmobQuery.setHasGroupCount(true);
+        bmobQuery.findStatistics(Record.class, new QueryListener<JSONArray>() {
 
+            @Override
+            public void done(JSONArray jsonArray, BmobException e) {
+                if (e == null) {
+                    if (jsonArray != null) {
+                        try {
+                            int length = jsonArray.length();
+                            for (int i = 0; i < length; i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                String lable = jsonObject.getString("kind");
+                                int num = jsonObject.getInt("_count");
+                                SliceValue sliceValue = new SliceValue((float) num, ChartUtils.pickColor());
+                                sliceValue.setLabel(lable);
+                                invalues.add(sliceValue);
+                            }
+                            Message msg = new Message();
+                            msg.what = tag;
+                            msg.obj = invalues;
+                            handler.sendMessage(msg);
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                    else
+                    {
+                        Log.e("smile","查询无数据 数组是空的");
+                    }
+                }else
+                {
+                    Log.e("smile","查询出错了++"+e.getMessage());
+                }
+            }
+        });
+    }
 }

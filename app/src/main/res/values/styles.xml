@@ -58,5 +58,4 @@
         <item name="android:clickable">true</item>
         <item name="android:textStyle">bold</item>
     </style>
-
 </resources>

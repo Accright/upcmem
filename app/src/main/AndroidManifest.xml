@@ -102,7 +102,12 @@
         <activity
             android:name=".TransferActivity"
             android:label="转账" />
-        <activity android:name=".AnalyseActivity"></activity>
+        <activity android:name=".AnalyseActivity" />
+        <activity android:name=".SettingActivity" />
+        <activity
+            android:name=".AboutActivity"
+            android:label="关于Upc理财"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

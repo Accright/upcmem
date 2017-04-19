@@ -34,8 +34,13 @@
     <string name="day_name_format">EEE</string>
     <string name="invalid_date">Date must be between %1$s and %2$s.</string>
     <string name="month_name_format">MMMM yyyy</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_pocket">PocketActivity</string>
+    <string name="aboutApp">
+        -Upc理财项目GitHub地址：https://github.com/Accright/upcmem\n
+        -该项目已经入beta1阶段\n
+        -项目开源库支持：SwipeMenuListView,HelloChart，BaiduMap\n
+        -项目实现功能:消费记录的添加，修改，删除，\n明细类别的添加，修改，删除，\n钱包类别的添加，修改删除，\n基于BaiduMapSDK的地理位置获取，
+         \n个人资料的修改，根据统计数据进行报表分析\n
+        -开发者：AccRight\n
+        -欢迎进行开源项目的开发和交流，任何意见和反馈提交至GitHub\n
+    </string>
 </resources>

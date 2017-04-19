@@ -384,13 +384,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }else if(id == R.id.slideloginout)
         {
             BmobUser.logOut();
+            Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(intent);
             finish();
         }else if (id == R.id.slidepocket)
         {
             Intent intent  = new Intent(MainActivity.this, PocketActivity.class);
             startActivity(intent);
+        }else if (id == R.id.slidesetting)
+        {
+            Intent intent = new Intent(MainActivity.this,SettingActivity.class);
+            startActivity(intent);
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
         drawer.closeDrawer(GravityCompat.START);
         return true;

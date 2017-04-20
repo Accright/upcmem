@@ -211,7 +211,7 @@ public class OutFragment extends Fragment {
                     nRecord.setLocation(bdLocation.getCity());
                     nRecord.setLocationDetail(bdLocation.getAddrStr());
                     location.setText(bdLocation.getAddrStr());
-                    Log.e("smile","获取的地点打印+++"+bdLocation.getCity()+bdLocation.getAddrStr());
+                    //Log.e("smile","获取的地点打印+++"+bdLocation.getCity()+bdLocation.getAddrStr());
                     Log.e("baidu", "定位的结果++++++++" + sb.toString());
                 }
             }
@@ -390,6 +390,7 @@ public class OutFragment extends Fragment {
                 nRecord.setKind(outKindsdispaly.getText().toString());
                 if (number.getText().toString().isEmpty()) {
                     number.setError("数值不能为空！");
+                    number.setFocusable(true);
                 } else {
                     progressDialog.show();
                     final Double temp = Double.valueOf(number.getText().toString());

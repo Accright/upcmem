@@ -28,7 +28,10 @@
                     />
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/base_color_text_black"
+                    android:textSize="20sp"
                     android:id="@+id/inkindsdisplay"
                     android:text="类型"/>
             </LinearLayout>

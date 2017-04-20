@@ -32,7 +32,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         inManage.setOnClickListener(this);
         outManage.setOnClickListener(this);
         about.setOnClickListener(this);
-        version.setText(getAppVersionName(this));
+        version.setText("version"+getAppVersionName(this));
 
     }
     @Override

@@ -61,7 +61,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     private EditText nickname;
     private EditText age;
     private EditText address;
-    private EditText phone;
+    private TextView phone;
     private EditText email;
     private EditText work;
     private EditText school;
@@ -90,19 +90,21 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         editok = (Button) findViewById(R.id.editok);
         ivHead = (CircleImageView) findViewById(R.id.editcircleImageView);
         layout_all = (RelativeLayout) findViewById(R.id.activity_edit);
+        initProgressDialog();//初始化progressDialog
+        initHintView();//初始化控件
+        setHintView();//设置控件HINT值
 
+        editok.setOnClickListener(this);
+        ivHead.setOnClickListener(this);
+    }
+
+    private void initProgressDialog() {
         //初始化查询等待框
         progressDialog = new ProgressDialog(this);//查询时的等待框
         progressDialog.setProgressStyle(progressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);// 设置是否可以通过点击Back键取消
         progressDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
         progressDialog.setTitle("正在修改");
-
-        initHintView();//初始化控件
-        setHintView();//设置控件HINT值
-
-        editok.setOnClickListener(this);
-        ivHead.setOnClickListener(this);
     }
 
     private void setHintView() {
@@ -112,8 +114,15 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         address.setHint(user.getAdress());
         work.setHint(user.getWork());
         school.setHint(user.getSchool());
-        phone.setHint(user.getMobilePhoneNumber());
         email.setHint(user.getEmail());
+
+        nickname.setText(user.getNickName());
+        age.setText(user.getAge().toString());
+        address.setText(user.getAdress());
+        work.setText(user.getWork());
+        school.setText(user.getSchool());
+        phone.setText(user.getMobilePhoneNumber());
+        email.setText(user.getEmail());
         /********
          * 下载图片
          */
@@ -147,7 +156,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         address = (EditText)findViewById(R.id.editaddress);
         work = (EditText) findViewById(R.id.editwork);
         school = (EditText) findViewById(R.id.editschool);
-        phone = (EditText) findViewById(R.id.editphone);
+        phone = (TextView) findViewById(R.id.editphone);
         email = (EditText) findViewById(R.id.editemail);
     }
 
@@ -204,6 +213,8 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     else
                     {
+                        progressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(),"更新失败"+e.getMessage(),Toast.LENGTH_SHORT).show();
                         Log.e("smile","更新用户遇到的问题是"+e.getMessage());
                     }
                 }

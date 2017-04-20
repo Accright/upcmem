@@ -73,8 +73,8 @@ public class LineChartFragment extends Fragment {
         lineChart.setZoomType(ZoomType.VERTICAL);       //水平垂直缩放
         lineChart.setOnValueTouchListener(new ValueTouchListener());
         LineList = new ArrayList<Line>();//初始化LineList
-        outBmobCount();
         inBmobCount();
+        outBmobCount();
         hander = new android.os.Handler()
         {
             @Override

@@ -37,10 +37,11 @@
     <string name="aboutApp">
         -Upc理财项目GitHub地址：https://github.com/Accright/upcmem\n
         -该项目已经入beta1阶段\n
-        -项目开源库支持：SwipeMenuListView,HelloChart，BaiduMap\n
-        -项目实现功能:消费记录的添加，修改，删除，\n明细类别的添加，修改，删除，\n钱包类别的添加，修改删除，\n基于BaiduMapSDK的地理位置获取，
-         \n个人资料的修改，根据统计数据进行报表分析\n
+        -项目开源库支持：HelloChart,SwipeMenuListView,BaiduMap\n
+        -使用数据库为Bmob云服务数据库\n
+        -项目实现功能:消费记录的添加，修改，删除，明细类别的添加，修改，删除，钱包类别的添加，修改删除，基于BaiduMapSDK的地理位置获取，
+         个人资料的修改，根据统计数据进行报表分析\n
         -开发者：AccRight\n
-        -欢迎进行开源项目的开发和交流，任何意见和反馈提交至GitHub\n
+        -欢迎进行开源项目的开发和交流，任何意见和反馈提交至GitHub
     </string>
 </resources>

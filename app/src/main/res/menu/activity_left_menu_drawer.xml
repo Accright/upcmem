@@ -8,7 +8,7 @@
             android:title="记录" />
         <item
             android:id="@+id/slidepocket"
-            android:icon="@drawable/pocket"
+            android:icon="@mipmap/pocket"
             android:title="钱包"/>
         <item
             android:id="@+id/slidepaint"
@@ -16,11 +16,11 @@
             android:title="报表" />
         <item
             android:id="@+id/slidepersonal"
-            android:icon="@drawable/personal"
+            android:icon="@mipmap/personnal"
             android:title="个人资料" />
         <item
             android:id="@+id/slidesetting"
-            android:icon="@drawable/setting"
+            android:icon="@mipmap/setting"
             android:title="设置" />
         <item
             android:id="@+id/slideloginout"

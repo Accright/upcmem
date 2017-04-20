@@ -43,6 +43,7 @@ import com.upc.adapter.FilterMultAdapter;
 import com.upc.adapter.SpinnerAdapter;
 import com.upc.dateSelect.CalendarPickerView;
 import com.upc.javabean.CircleImageView;
+import com.upc.javabean.Pocket;
 import com.upc.javabean.Record;
 import com.upc.javabean.RecordHolder;
 import com.upc.javabean.User;
@@ -73,6 +74,7 @@ import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.DownloadFileListener;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.UpdateListener;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,IXListViewListener {
@@ -337,8 +339,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void delete(Record item) {
         // delete app
-        item.setDeleted(true);
-        item.update(new UpdateListener() {
+        final Record recordTemp = item;
+        recordTemp.setDeleted(true);
+        String tempPoketId = recordTemp.getPocketId();
+        recordTemp.update(new UpdateListener() {
             @Override
             public void done(BmobException e) {
                 if(e!=null)
@@ -348,6 +352,65 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Log.e("smile","删除成功");
             }
         });
+        if (item.getType().equals("支出"))
+        {
+            BmobQuery<Pocket> bmobQuery = new BmobQuery<>();
+            bmobQuery.getObject(tempPoketId, new QueryListener<Pocket>() {
+                @Override
+                public void done(Pocket pocket, BmobException e) {
+                    if (e==null)
+                    {
+                        Pocket pocketTemp = new Pocket();
+                        pocketTemp = pocket;
+                        pocketTemp.setNumber(pocket.getNumber()+recordTemp.getNumber());
+                        pocketTemp.update(pocketTemp.getObjectId(), new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                if (e==null)
+                                {
+                                    Log.e("smile","当item为支出时删除时更新Pocket成功");
+                                }else
+                                {
+                                    Log.e("smile","当item为支出时删除时更新Pocket失败"+e.getMessage());
+                                }
+                            }
+                        });
+                    }else
+                    {
+                        Log.e("smile","item为支出时删除时查询Pocket失败了");
+                    }
+                }
+            });
+        }else
+        {
+            BmobQuery<Pocket> bmobQuery = new BmobQuery<>();
+            bmobQuery.getObject(tempPoketId, new QueryListener<Pocket>() {
+                @Override
+                public void done(Pocket pocket, BmobException e) {
+                    if (e==null)
+                    {
+                        Pocket pocketTemp = new Pocket();
+                        pocketTemp = pocket;
+                        pocketTemp.setNumber(pocket.getNumber()-recordTemp.getNumber());
+                        pocketTemp.update(pocketTemp.getObjectId(), new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                if (e==null)
+                                {
+                                    Log.e("smile","当item为收入时删除时更新Pocket成功");
+                                }else
+                                {
+                                    Log.e("smile","当item为收入时删除时更新Pocket失败"+e.getMessage());
+                                }
+                            }
+                        });
+                    }else
+                    {
+                        Log.e("smile","item为收入时删除时查询Pocket失败了");
+                    }
+                }
+            });
+        }
     }
 
     private void edit(Record item) {
@@ -433,6 +496,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             Log.e("smile","查询的list值是+++++"+list.toString());
                             message.what= 1;
                             handler.sendMessage(message);//将获得的list发送出去
+                        }else
+                        {
+                            progressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(),"查询失败",Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -457,6 +524,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             Log.e("smile","查询的list值是+++++"+list.toString());
                             message.what= 1;
                             handler.sendMessage(message);//将获得的list发送出去
+                        }else
+                        {
+                            progressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(),"查询失败",Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -480,6 +551,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             Log.e("smile","查询的list值是+++++"+list.toString());
                             message.what= 1;
                             handler.sendMessage(message);//将获得的list发送出去
+                        }else
+                        {
+                            progressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(),"查询失败",Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -533,6 +608,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Log.e("smile","查询的list值是+++++"+list.toString());
                         message.what= 1;
                         handler.sendMessage(message);//将获得的list发送出去
+                    }else
+                    {
+                        progressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(),"查询失败",Toast.LENGTH_SHORT).show();
                     }
                 }
             });

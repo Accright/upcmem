@@ -1,5 +1,6 @@
 package com.upc.software.upcmem;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -104,6 +105,8 @@ public class ModifyActivity extends AppCompatActivity {
     private static final int REQUESTCODE_PIC = 1;//相册
     private static final int REQUESTCODE_CAM = 2;//相机
     private static final int REQUESTCODE_CUT = 3;//图片裁剪
+    /****************************************/
+    ProgressDialog progressDialog,imgdialog;//查询等待框,图片下载等待
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +114,7 @@ public class ModifyActivity extends AppCompatActivity {
         user = BmobUser.getCurrentUser(User.class);
         Intent intent = getIntent();
         item = (Record) intent.getSerializableExtra("item");
+        initProgressDialog();
         initView();
         initWidget();
         initData();
@@ -124,6 +128,19 @@ public class ModifyActivity extends AppCompatActivity {
         });
     }
 
+    private void initProgressDialog() {
+        //初始化查询等待框
+        progressDialog = new ProgressDialog(this);//查询时的等待框
+        progressDialog.setProgressStyle(progressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);// 设置是否可以通过点击Back键取消
+        progressDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+        progressDialog.setTitle("正在修改");
+        imgdialog = new ProgressDialog(this);
+        imgdialog.setProgressStyle(progressDialog.STYLE_SPINNER);
+        imgdialog.setCancelable(true);
+        imgdialog.setCanceledOnTouchOutside(false);
+        imgdialog.setTitle("正在下载图片");
+    }
     private void changeDatas() {
         if (modifyNum.getText().toString().equals(""))
         {
@@ -376,16 +393,20 @@ public class ModifyActivity extends AppCompatActivity {
         /***************下载图片****************/
         if(item.getImageUrl()!=null)
         {
+            imgdialog.show();
             BmobFile bmobfile =new BmobFile(item.getObjectId()+".png","",item.getImageUrl());
             bmobfile.download(new DownloadFileListener() {
                 @Override
                 public void done(String s, BmobException e) {
                     if(e==null){
+                        imgdialog.dismiss();
                         Log.e("smile","下载成功,保存路径:"+s);
                         Bitmap bm = BitmapFactory.decodeFile(s);
                         modifyImg.setVisibility(View.VISIBLE);
                         modifyImg.setImageBitmap(bm);
                     }else{
+                        imgdialog.dismiss();
+                        Toast.makeText(getApplicationContext(),"图片下载失败",Toast.LENGTH_SHORT);
                         Log.e("smile","下载失败："+e.getErrorCode()+","+e.getMessage());
                     }
                 }

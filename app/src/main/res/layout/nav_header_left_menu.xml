@@ -17,7 +17,7 @@
         android:layout_height="80dp"
         android:layout_gravity="center_horizontal"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:src="@drawable/in">
+        android:src="@drawable/ic_launcher">
     </com.upc.javabean.CircleImageView>
     <TextView
         android:id="@+id/slidenickname"

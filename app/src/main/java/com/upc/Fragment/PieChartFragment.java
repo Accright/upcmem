@@ -177,6 +177,7 @@ public class PieChartFragment extends Fragment {
         Log.e("smile","piechart执行到支出筛选");
         BmobQuery<Record> bmobQuery = new BmobQuery<>();
         bmobQuery.addWhereEqualTo("type","支出");
+        bmobQuery.addWhereEqualTo("deleted",false);
         bmobQuery.groupby(new String[]{"kind"});
         bmobQuery.order("-created");
         bmobQuery.setHasGroupCount(true);
@@ -222,6 +223,7 @@ public class PieChartFragment extends Fragment {
         Log.e("smile","piechart执行到收入筛选");
         BmobQuery<Record> bmobQuery = new BmobQuery<>();
         bmobQuery.addWhereEqualTo("type", "收入");
+        bmobQuery.addWhereEqualTo("deleted",false);
         bmobQuery.groupby(new String[]{"kind"});
         bmobQuery.order("-created");
         bmobQuery.setHasGroupCount(true);

@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int state;//三种状态的标识符
     private List<String> filterOut = new ArrayList<>();//bmobQuery的支出筛选查询条件
     private List<String> filterIn = new ArrayList<>();//bmobQuery的收入筛选查询条件
+    ArrayList<String> tempOutkinds,tempInkinds;//构建适配器所用的ArrayList
     /**************************/
     ProgressDialog progressDialog;//查询等待框
     @Override
@@ -117,8 +118,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(user==null)
         {
             Log.e("smile","主界面的user确实是空的");
-            android.support.v7.app.AlertDialog alert =new AlertDialog.Builder(this).setCancelable(false).setTitle("重新登录").setMessage("登录失效，请重新登录").create();
-            alert.show();
             Log.e("smile","即将跳转到登录界面");
             Intent intent = new Intent(MainActivity.this,LoginActivity.class);
             startActivity(intent);
@@ -780,8 +779,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             Log.e("smile","进行支出或收入筛选+++");
             final String[] type = {"不限","支出","收入"};//支出和收入和不限
-            final ArrayList<String> tempOutkinds = new ArrayList<>();//
-            final ArrayList<String> tempInkinds = new ArrayList<>();//用户所拥有的支出和收入类别（ArrayList// ）
+            tempOutkinds = new ArrayList<>();//
+            tempInkinds = new ArrayList<>();//用户所拥有的支出和收入类别（ArrayList// ）
             outkinds = user.getOutKinds();
             inkinds = user.getInKinds();
             tempOutkinds.addAll(outkinds);

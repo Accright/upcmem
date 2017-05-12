@@ -131,7 +131,7 @@ public class LineChartFragment extends Fragment {
                 }
             }
         };
-        Log.e("testcount","list的值是+"+LineList.size());
+        Log.e("testcount","list的值是+"+LineList.toString());
         mLineData = new LineChartData(LineList);                      //将所有的线加入线数据类中
         mLineData.setBaseValue(Float.NEGATIVE_INFINITY);           //设置基准数(大概是数据范围)
         //如果显示坐标轴

@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.upc.javabean.CircleImageView;
 import com.upc.javabean.Record;
+import com.upc.receiver.StateChangeReceiver;
+import com.upc.service.DetailChangeService;
 
 import org.w3c.dom.Text;
 

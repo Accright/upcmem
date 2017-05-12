@@ -12,7 +12,9 @@
 
     <ScrollView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -68,6 +70,8 @@
                         android:paddingLeft="100dp"
                         android:layout_gravity="center_vertical"
                         android:hint="未成功获取"
+                        android:maxLines="1"
+                        android:singleLine="true"
                         android:textColor="@color/base_color_text_black"
                         android:textSize="20sp"/>
                 </LinearLayout>
@@ -95,6 +99,7 @@
                         android:paddingLeft="100dp"
                         android:layout_gravity="center_vertical"
                         android:hint="未成功获取"
+                        android:maxLines="1"
                         android:textColor="@color/base_color_text_black"
                         android:textSize="20sp"/>
                 </LinearLayout>
@@ -121,6 +126,8 @@
                         android:paddingLeft="100dp"
                         android:layout_gravity="center_vertical"
                         android:hint="未成功获取"
+                        android:maxLines="1"
+                        android:singleLine="true"
                         android:textColor="@color/base_color_text_black"
                         android:textSize="20sp"/>
                 </LinearLayout>
@@ -147,6 +154,8 @@
                         android:paddingLeft="100dp"
                         android:layout_gravity="center_vertical"
                         android:hint="未成功获取"
+                        android:maxLines="1"
+                        android:singleLine="true"
                         android:textColor="@color/base_color_text_black"
                         android:textSize="20sp"/>
                 </LinearLayout>
@@ -174,6 +183,8 @@
                         android:layout_gravity="center_vertical"
                         android:hint="未成功获取"
                         android:paddingLeft="100dp"
+                        android:maxLines="1"
+                        android:singleLine="true"
                         android:textColor="@color/base_color_text_black"
                         android:textSize="20sp" />
                 </LinearLayout>
@@ -201,6 +212,8 @@
                         android:paddingLeft="80dp"
                         android:layout_gravity="center_vertical"
                         android:hint="未成功获取"
+                        android:maxLines="1"
+                        android:singleLine="true"
                         android:textColor="@color/base_color_text_black"
                         android:textSize="20sp"/>
                 </LinearLayout>

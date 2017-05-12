@@ -1,6 +1,7 @@
 package com.upc.software.upcmem;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 
 import com.upc.javabean.CircleImageView;
 import com.upc.javabean.User;
+import com.upc.receiver.StateChangeReceiver;
+import com.upc.service.DetailChangeService;
 
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
@@ -32,6 +35,10 @@ public class PersonalActivity extends AppCompatActivity {
     private TextView email;
     private TextView work;
     private TextView school;
+    User user;//user
+    /*****************实时更新信息广播和服务*******************/
+    DetailChangeService detailChangeService;
+    StateChangeReceiver stateChangeReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,9 +55,15 @@ public class PersonalActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });//设置编辑选项
-
-        /*************显示详细信息*****************/
-        User user = BmobUser.getCurrentUser(User.class);
+        /*stateChangeReceiver = new StateChangeReceiver();
+        *//*************显示详细信息*****************//*
+        if (stateChangeReceiver.user!=null)
+        {
+            user = stateChangeReceiver.user;
+        }else {
+            user = BmobUser.getCurrentUser(User.class);
+        }*/
+        user = BmobUser.getCurrentUser(User.class);
         nickname.setText(user.getNickName());
         age.setText(user.getAge().toString()+"岁");
         address.setText(user.getAdress());

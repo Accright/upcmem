@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.upc.javabean.CircleImageView;
 import com.upc.javabean.User;
+import com.upc.service.DetailChangeService;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -209,6 +210,11 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                     {
                         progressDialog.dismiss();
                         Log.e("smile","用户信息更新成功");
+                       /* Intent intent = new Intent(EditActivity.this, DetailChangeService.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("user",nUser);
+                        intent.putExtras(bundle);
+                        startService(intent);*/
                         finish();
                     }
                     else

@@ -57,7 +57,7 @@ public class GridViewAdapter extends BaseAdapter {
         {
             /*itemText.setTextSize(TypedValue.COMPLEX_UNIT_SP,15);
             itemText.setGravity(Gravity.CENTER);*/
-            itemText.setText("编辑");
+            itemText.setText("编辑类别");
         }
         return view;
     }

@@ -35,6 +35,7 @@
     <string name="invalid_date">Date must be between %1$s and %2$s.</string>
     <string name="month_name_format">MMMM yyyy</string>
     <string name="aboutApp">
+        \n
         -Upc理财项目GitHub地址：https://github.com/Accright/upcmem\n
         \n
         -该项目已经入beta1阶段\n

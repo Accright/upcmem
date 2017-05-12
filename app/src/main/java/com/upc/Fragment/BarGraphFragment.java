@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.upc.javabean.Record;
 import com.upc.javabean.User;
@@ -27,6 +28,8 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
+import lecho.lib.hellocharts.gesture.ZoomType;
+import lecho.lib.hellocharts.listener.ColumnChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.Column;
 import lecho.lib.hellocharts.model.ColumnChartData;
@@ -43,8 +46,10 @@ public class BarGraphFragment extends Fragment {
     private ColumnChartView columnChartView;
     Handler handler;
     List<Float> inList,outList;
-    List<Float> handleInList,handleOutList;
+    List<Float> handleInList = new ArrayList<>();
+    List<Float> handleOutList = new ArrayList<>();
     List<Column> columns = new ArrayList<>();
+    List<SubcolumnValue> values;
     private int numberOfPoints = 12;//columunNum
     /*========== 状态相关 ==========*/
     private boolean isHasAxes = true;                       //是否显示坐标轴
@@ -69,8 +74,8 @@ public class BarGraphFragment extends Fragment {
         View viewRoot = inflater.inflate(R.layout.fragment_bar_graph,container,false);
         user = BmobUser.getCurrentUser(User.class);
         columnChartView =(ColumnChartView) viewRoot.findViewById(R.id.columnchart);
-        /*outBmobCount();
-        inBmobCount();*/
+        outBmobCount();
+        inBmobCount();
         handler = new Handler()
         {
             @Override
@@ -79,49 +84,63 @@ public class BarGraphFragment extends Fragment {
                 {
                     case 1:
                         Log.e("columntest","执行到case1");
+                        Log.e("columntest","msg is ++"+msg.toString());
                         handleOutList = (List<Float>) msg.obj;
-                        List<SubcolumnValue> values = new ArrayList<>();
-                        for (int j = 1; j <= numberOfPoints; ++j) {
-                            values.add(new SubcolumnValue(handleOutList.get(j),Color.parseColor("#330033")));
-                        }
+                        //handleInList = (List<Float>) msg.obj;
+                       /* values = new ArrayList<>();
+                        values.add(new SubcolumnValue(handleOutList.get(j),Color.parseColor("#330033")));*/
+                            // values.add(new SubcolumnValue(handleInList.get(j),Color.parseColor("#660036")));
+                           /*  *//*===== 柱状图相关设置 =====*//*
+                            Column column = new Column(values);
+                            column.setHasLabels(isHasColumnLabels);                    //没有标签
+                            column.setHasLabelsOnlyForSelected(isColumnsHasSelected);  //点击只放大
+                            columns.add(column);*/
+                        break;
+                    case 2:
+                        Log.e("columntest","执行到case2");
+                        handleInList = (List<Float>) msg.obj;
+                        break;
+                }
+                if (handleInList.size()!=0&&handleOutList.size()!=0)
+                {
+                    Log.e("columntest","测试handler出来的list+++"+handleOutList+handleInList);
+                    for (int j = 1; j <= numberOfPoints; ++j) {
+                        values = new ArrayList<>();
+                        values.add(new SubcolumnValue(handleOutList.get(j),ChartUtils.COLOR_ORANGE));
+                        values.add(new SubcolumnValue(handleInList.get(j), ChartUtils.COLOR_BLUE));
                        /*===== 柱状图相关设置 =====*/
                         Column column = new Column(values);
                         column.setHasLabels(isHasColumnLabels);                    //没有标签
                         column.setHasLabelsOnlyForSelected(isColumnsHasSelected);  //点击只放大
                         columns.add(column);
-                        break;
-                    case 2:
-                        Log.e("columntest","执行到case2");
-                        handleInList = (List<Float>) msg.obj;
-                        values = new ArrayList<>();
-                        for (int j = 1; j <= numberOfPoints; ++j) {
-                            values.add(new SubcolumnValue(handleInList.get(j),Color.parseColor("#330033")));
-                        }
-                       /*===== 柱状图相关设置 =====*/
-                        Column column1 = new Column(values);
-                        column1.setHasLabels(isHasColumnLabels);                    //没有标签
-                        column1.setHasLabelsOnlyForSelected(isColumnsHasSelected);  //点击只放大
-                        columns.add(column1);
-                        break;
-                }
-                Log.e("columntest","columns 是+++++++++++++++"+columns.toString());
-                mColumnChartData = new ColumnChartData(columns);               //设置数据
-                mColumnChartData.setStacked(false);                          //设置是否堆叠
-        /*===== 坐标轴相关设置 类似于Line Charts =====*/
-                if (isHasAxes) {
-                    Axis axisX = new Axis();
-                    Axis axisY = new Axis().setHasLines(true);
-                    if (isHasAxesNames) {
-                        axisX.setName("月份");
-                        axisY.setName("数值");
                     }
-                    mColumnChartData.setAxisXBottom(axisX);
-                    mColumnChartData.setAxisYLeft(axisY);
-                } else {
-                    mColumnChartData.setAxisXBottom(null);
-                    mColumnChartData.setAxisYLeft(null);
+                    if (columns.size()>12)
+                    {
+                        Log.e("columntest","限制column 数量被执行");
+                        columns = columns.subList(0,11);
+                    }
+                    Log.e("columntest","columns 是+++++++++++++++"+columns.toString());
+                    mColumnChartData = new ColumnChartData(columns);               //设置数据
+                    mColumnChartData.setStacked(false);                          //设置是否堆叠
+                    /*===== 坐标轴相关设置 类似于Line Charts =====*/
+                    if (isHasAxes) {
+                        Axis axisX = new Axis();
+                        Axis axisY = new Axis().setHasLines(true);
+                        if (isHasAxesNames) {
+                            axisX.setName("月份");
+                            axisY.setName("数值");
+                        }
+                        mColumnChartData.setAxisXBottom(axisX);
+                        mColumnChartData.setAxisYLeft(axisY);
+                    } else {
+                        mColumnChartData.setAxisXBottom(null);
+                        mColumnChartData.setAxisYLeft(null);
+                    }
+                    columnChartView.setZoomEnabled(true);
+                    columnChartView.setZoomType(ZoomType.VERTICAL);
+                    columnChartView.setOnValueTouchListener(new ValueTouchListener());
+                    columnChartView.setColumnChartData(mColumnChartData);
                 }
-                columnChartView.setColumnChartData(mColumnChartData);
             }
         };
         return  viewRoot;
@@ -161,7 +180,6 @@ public class BarGraphFragment extends Fragment {
                             Message msg = new Message();
                             msg.what = 1;
                             msg.obj = outList;
-                            Log.e("columntest","查询出来的统计支出数据list是+++++"+outList.toString());
                             handler.sendMessage(msg);
                         } catch (JSONException e1) {
                             Log.e("columntest","JsonArrayError++++++++++++++++++");
@@ -230,5 +248,20 @@ public class BarGraphFragment extends Fragment {
                 }
             }
         });
+    }
+    /**
+     * 子列触摸监听
+     */
+    private class ValueTouchListener implements ColumnChartOnValueSelectListener {
+
+        @Override
+        public void onValueSelected(int columnIndex, int subcolumnIndex, SubcolumnValue value) {
+            Toast.makeText(getActivity(), "当前月的值约为 " + (int) value.getValue(), Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onValueDeselected() {
+
+        }
     }
 }

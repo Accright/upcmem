@@ -42,9 +42,8 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
@@ -102,14 +101,26 @@
         <activity
             android:name=".TransferActivity"
             android:label="转账" />
-        <activity android:name=".AnalyseActivity"
-            android:label="报表分析"/>
-        <activity android:name=".SettingActivity"
-            android:label="设置"/>
+        <activity
+            android:name=".AnalyseActivity"
+            android:label="报表分析" />
+        <activity
+            android:name=".SettingActivity"
+            android:label="设置" />
         <activity
             android:name=".AboutActivity"
             android:label="关于Upc理财"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <receiver
+            android:name="com.upc.receiver.StateChangeReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <service
+            android:name="com.upc.service.DetailChangeService"
+            android:exported="false" />
+
     </application>
 
 </manifest>
